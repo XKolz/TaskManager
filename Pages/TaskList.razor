@@ -1,0 +1,45 @@
+@page "/tasks"
+@using TaskManager.Models
+
+<h3>Task Manager</h3>
+
+<input @bind="newTaskTitle" placeholder="Enter a new task" />
+<button @onclick="AddTask">Add Task</button>
+
+<ul>
+    @foreach (var task in tasks)
+    {
+        <li>
+            @* <input type="checkbox" @bind="task.IsCompleted" @onchange="UpdateTask" /> *@
+            <input type="checkbox" @bind="task.IsCompleted" />
+            @task.Title
+            <button @onclick="() => DeleteTask(task.Id)">Delete</button>
+        </li>
+    }
+</ul>
+
+@code {
+    private List<TaskItem> tasks = new();
+    private string newTaskTitle = "";
+
+    private void AddTask()
+    {
+        if (!string.IsNullOrWhiteSpace(newTaskTitle))
+        {
+            var newTask = new TaskItem { Id = tasks.Count + 1, Title = newTaskTitle, IsCompleted = false };
+            tasks.Add(newTask);
+            newTaskTitle = ""; // Clear input field
+        }
+    }
+
+    private void DeleteTask(int id)
+    {
+        var task = tasks.FirstOrDefault(t => t.Id == id);
+        if (task != null) tasks.Remove(task);
+    }
+
+    private void UpdateTask(ChangeEventArgs e)
+    {
+        // Update task completion (already handled by data binding here)
+    }
+}
